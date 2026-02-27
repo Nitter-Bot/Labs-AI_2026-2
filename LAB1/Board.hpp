@@ -40,9 +40,9 @@ public:
 		for (int size:ships){
         		bool placed = false;
         		while(!placed){
-        			int x = rand() % 10;
-        			int y = rand() % 10;
-        			char o = (rand() % 2 == 0) ? 'H' : 'V';
+        			int x = rnd() % 10;
+        			int y = rnd() % 10;
+        			char o = (rnd() % 2 == 0) ? 'H' : 'V';
         			if(canPlacePiece(x, y, size, o)) {
                 			placePiece(x, y, size, o);
                 			placed = 1;
