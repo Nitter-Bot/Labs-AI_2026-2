@@ -34,4 +34,16 @@ public:
     }
 };
 
+class GoalBasedAgentInsane:public Agent{
+public:
+    std::pair<int, int> getShot() override{
+        int x, y;
+        do{
+            x = rnd() % 10;
+            y = rnd() % 10;
+        }while(trackingBoard.grid[y][x] != 0);
+        return {x, y};
+    }
+};
+
 #endif
