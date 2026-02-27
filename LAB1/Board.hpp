@@ -2,6 +2,8 @@
 #define BOARD_HPP
 
 #include <bits/stdc++.h>
+using namespace std;
+mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
 class Board{
 public:
@@ -13,14 +15,14 @@ public:
 
 	bool canPlacePiece(int x, int y, int size, char orientation){
         	if(orientation == 'H' || orientation == 'h'){
-        		if(y+size > 10)return 0;
+        		if(x+size > 10)return 0;
 			for(int i = 0; i < size; ++i){
-                		if(grid[x][y + i] != 0)return 0;
+                		if(grid[y][x + i] != 0)return 0;
 			}
 		}else{
-        		if(x+size>10)return 0;
+        		if(y+size>10)return 0;
 			for(int i=0;i<size;i++){
-				if (grid[x+i][y]!= 0)return 0;
+				if (grid[y+i][x]!= 0)return 0;
 			}
         	}
         	return 1;
@@ -28,13 +30,13 @@ public:
 
 	void placePiece(int x, int y, int size, char orientation){
         	if (orientation == 'H' || orientation == 'h'){
-        		for(int i=0;i<size;i++)grid[x][y+i] = 1;
+        		for(int i=0;i<size;i++)grid[y][x+i] = 1;
         	}else{
-        		for(int i=0;i<size;i++)grid[x+i][y] = 1;
+        		for(int i=0;i<size;i++)grid[y+i][x] = 1;
 		}
 	}
 
-	void generateRandomBoard(std::mt19937& rnd){
+	void generateRandomBoard(){
                 std::vector<int> ships = {5, 4, 3, 3, 2};
 
 		for (int size:ships){
