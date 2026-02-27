@@ -34,8 +34,8 @@ public:
 		}
 	}
 
-	void generateRandomBoard(){
-        	vector<int> ships = {5, 4, 3, 3, 2};
+	void generateRandomBoard(std::mt19937& rnd){
+                std::vector<int> ships = {5, 4, 3, 3, 2};
 
 		for (int size:ships){
         		bool placed = false;
