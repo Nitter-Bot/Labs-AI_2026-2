@@ -1,0 +1,17 @@
+1. Instalar SFML (Ubuntu)
+En la terminal 
+    sudo apt update
+    sudo apt install libsfml-dev
+
+2. Compilar
+En la carpeta donde esten los archivos 
+    g++ GameUI.cpp -o battleship -lsfml-graphics -lsfml-window -lsfml-system
+
+3. Ejecutar
+Solo en la terminal escribe
+    ./battleship
+
+Resumen:
+sudo apt install libsfml-dev
+g++ GameUI.cpp -o battleship -lsfml-graphics -lsfml-window -lsfml-system
+./battleship
