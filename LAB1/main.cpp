@@ -12,13 +12,26 @@ int main() {
     std::cout << "Elige contra que agente jugaras:\n";
     std::cout << "1. Agente de Reflejos\n";
     std::cout << "2. Agente Goal-Based\n";
+    std::cout << "3. Agente Insano\n";
     std::cout << "Opcion: ";
     std::cin >> opc;
 
-    if (opc == 1) {
+    if (opc == 1) 
+    {
         ai = new ReflexAgent();
-    } else {
+    }
+    else if (opc == 2) 
+    {
         ai = new GoalBasedAgent();
+    }
+    else if (opc == 3) 
+    {
+        ai = new GoalBasedAgentInsane();
+    }
+    else 
+    {
+        std::cout << "Opcion invalida, se usara Agente de Reflejos.\n";
+        ai = new ReflexAgent();
     }
 
     std::cout << "\nComo quieres colocar tus barcos?\n";
@@ -30,7 +43,6 @@ int main() {
     if (opc == 1) human.setupBoardManual();
     else human.setupBoardRandom();
 
-    // El agente siempre genera el suyo aleatoriamente
     ai->setupBoardRandom();
 
     bool humanTurn = true;
