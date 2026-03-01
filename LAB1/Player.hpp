@@ -6,9 +6,9 @@
 
 class Player{
 public:
+        virtual ~Player() = default;
         Board ownBoard;
         Board trackingBoard;
-
         void setupBoardManual(){
                 int ships[] = {5, 4, 3, 3, 2};
                 for (int size : ships){
@@ -53,10 +53,10 @@ public:
                 bool hit = enemy.ownBoard.processShot(x, y);
                 if (hit) {
                         trackingBoard.grid[y][x] = -1;
-                        std::cout << "¡Hit en (" << x << ", " << y << ")!\n";
+                        //std::cout << "¡Hit en (" << x << ", " << y << ")!\n";
                 } else {
                         trackingBoard.grid[y][x] = 2;
-                        std::cout << "Fallo en (" << x << ", " << y << ").\n";
+                        //std::cout << "Fallo en (" << x << ", " << y << ").\n";
                 }
         }
 
