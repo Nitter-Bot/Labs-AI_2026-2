@@ -91,8 +91,9 @@ int main() {
     int algo_type = 1;
     std::function<int(const State&)> heuristic;
 
-    Button btn3x3(sf::Vector2f(200.f, 200.f), sf::Vector2f(200.f, 50.f), "Tablero 3x3", font);
-    Button btn4x4(sf::Vector2f(200.f, 300.f), sf::Vector2f(200.f, 50.f), "Tablero 4x4", font);
+    Button btn3x3(sf::Vector2f(200.f, 150.f), sf::Vector2f(200.f, 50.f), "Tablero 3x3", font);
+    Button btn4x4(sf::Vector2f(200.f, 250.f), sf::Vector2f(200.f, 50.f), "Tablero 4x4", font);
+    Button btn5x5(sf::Vector2f(200.f, 350.f), sf::Vector2f(200.f, 50.f), "Tablero 5x5", font);
 
     Button btnMisplaced(sf::Vector2f(150.f, 200.f), sf::Vector2f(300.f, 50.f), "Misplaced Tiles", font);
     Button btnManhattan(sf::Vector2f(150.f, 300.f), sf::Vector2f(300.f, 50.f), "Manhattan Distance", font);
@@ -111,8 +112,14 @@ int main() {
                     solution = res.path;
                     solved = true;
                 }
-            } else {
+            } else if (algo_type == 2) {
                 IDAStarResult res = idaStar(startState, heuristic);
+                if (res.success) {
+                    solution = res.path;
+                    solved = true;
+                }
+            } else if (algo_type == 3) {
+                IDAStarResult res = wIdaStar(startState, heuristic, 2.0);
                 if (res.success) {
                     solution = res.path;
                     solved = true;
@@ -156,6 +163,12 @@ int main() {
                             heuristic = linearConflict;
                             currentState = SOLVING;
                             startSolving();
+                        } else if (btn5x5.isClicked(mousePos)) {
+                            size = 5;
+                            algo_type = 3; 
+                            heuristic = linearConflict;
+                            currentState = SOLVING;
+                            startSolving();
                         }
                     } else if (currentState == MENU_HEURISTIC) {
                         if (btnMisplaced.isClicked(mousePos)) {
@@ -179,6 +192,7 @@ int main() {
         if (currentState == MENU_BOARD) {
             btn3x3.draw(window);
             btn4x4.draw(window);
+            btn5x5.draw(window);
         } else if (currentState == MENU_HEURISTIC) {
             btnMisplaced.draw(window);
             btnManhattan.draw(window);
