@@ -116,4 +116,41 @@ IDAStarResult idaStar(const State& start, std::function<int(const State&)> heuri
     return {false, {}, total_nodes, max_depth};
 }
 
+std::pair<int, bool> wIdaStarDFS(State current, int g, int limit, std::function<int(const State&)> heuristic, std::vector<State>& path, int& nodes, int& max_d, double w) {
+    nodes++;
+    max_d = std::max(max_d, g);
+    int f = g + w * heuristic(current);
+    if (f > limit) return {f, false};
+    if (current.isGoal()) return {f, true};
+
+    int min_limit = 1e9;
+    for (const State& neighbor : current.getNeighbors()) {
+        if (std::find(path.begin(), path.end(), neighbor) == path.end()) {
+            path.push_back(neighbor);
+            auto [new_limit, found] = wIdaStarDFS(neighbor, g + 1, limit, heuristic, path, nodes, max_d, w);
+            if (found) return {new_limit, true};
+            min_limit = std::min(min_limit, new_limit);
+            path.pop_back();
+        }
+    }
+    return {min_limit, false};
+}
+
+IDAStarResult wIdaStar(const State& start, std::function<int(const State&)> heuristic, double w) {
+    int limit = w * heuristic(start);
+    std::vector<State> path = {start};
+    int total_nodes = 0;
+    int max_depth = 0;
+
+    while (true) {
+        auto [new_limit, found] = wIdaStarDFS(start, 0, limit, heuristic, path, total_nodes, max_depth, w);
+        if (found) {
+            return {true, path, total_nodes, max_depth};
+        }
+        if (new_limit == 1e9) break;
+        limit = new_limit;
+    }
+    return {false, {}, total_nodes, max_depth};
+}
+
 #endif
