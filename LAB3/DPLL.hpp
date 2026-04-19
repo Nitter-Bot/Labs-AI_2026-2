@@ -38,13 +38,15 @@ bool run_dpll(CNF phi){
 	for (const auto& clause:phi)
 		for (Literal l:clause)literals.insert(l);
 
-	for(Literal l:literals){
+	
+	for(Literal l:literals)
 		if (literals.find(-l)==literals.end())
 		    return run_dpll(assign_literal(phi, l));
 
 	Literal v = std::abs(*literals.begin());
 	if(run_dpll(assign_literal(phi, v)))return true;
 	return run_dpll(assign_literal(phi,-v));
+	
 }
 
 #endif
