@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <SFML/System.hpp> 
 #include "APIClient.hpp"
 #include "GameState.hpp"
+#include "UIGame.hpp"
 
 struct Position { int x, y; };
 bool operator<(const Position& a, const Position& b) {
@@ -23,17 +25,25 @@ int main() {
 
     if (!client.start_game(p)) return 1;
 
+    UIGame ui;
+
     int x = 0, y = 0, dir = 0; 
     bool has_gold = false;
     std::set<Position> visited;
 
-    while (!p.gameOver) {
+    while (!p.gameOver && ui.isOpen()) {
+
+        ui.handleEvents(); 
+
         state.update_perception(x, y, p);
         visited.insert({x, y});
 
         if (p.glitter && !has_gold) {
             client.send_action("Grab", p);
             has_gold = true;
+
+            ui.render(x, y, p); 
+            sf::sleep(sf::milliseconds(400));
             continue;
         }
 
@@ -73,6 +83,7 @@ int main() {
 
         client.send_action(action, p);
 
+        // actualizar posición
         if (action == "TurnLeft") dir = (dir + 1) % 4;
         else if (action == "TurnRight") dir = (dir + 3) % 4;
         else if (action == "Forward" && !p.bump) {
@@ -81,6 +92,10 @@ int main() {
             else if (dir == 2) x--;
             else if (dir == 3) y--;
         }
+
+        ui.render(x, y, p);
+
+        sf::sleep(sf::milliseconds(400)); // para ver movimiento
     }
 
     std::cout << p.message << "\nPuntaje: " << p.score << "\n";
