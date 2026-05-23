@@ -7,6 +7,7 @@
 #include "Headers/Ghost.hpp"
 #include "Headers/MapCollision.hpp"
 #include "Headers/Dpll.hpp"
+#include "Headers/Bayesian.hpp"
 
 Ghost::Ghost(unsigned char i_id) :
 	id(i_id)
@@ -456,7 +457,9 @@ void Ghost::update_target(unsigned char i_pacman_direction, const Position& i_gh
 				}
 				case 2: // Blue Ghost -> Bayesian Network
 				{
-					target = i_pacman_position;
+					if(position.x%CELL_SIZE==0&&position.y%CELL_SIZE==0)
+						target = calculate_Bayes_move(i_map, position, i_pacman_position, i_pacman_direction);
+
 					break;
 				}
 				case 3: //The orange gohst will chase Pacman until it gets close to him. Then it'll switch to the scatter mode.
