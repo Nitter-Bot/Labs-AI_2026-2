@@ -8,6 +8,7 @@
 #include "Headers/MapCollision.hpp"
 #include "Headers/Dpll.hpp"
 #include "Headers/Bayesian.hpp"
+#include "Headers/AStar.hpp"
 
 Ghost::Ghost(unsigned char i_id) :
 	id(i_id)
@@ -430,51 +431,64 @@ void Ghost::update_target(unsigned char i_pacman_direction, const Position& i_gh
 		}
 		else //The chase mode
 		{
-			switch (id)
-			{
-				case 0: //Red ghost -> A*
-				{
-					target = i_pacman_position;
+		// Relojes independientes para cada fantasma. Al ser 'static', conservan su tiempo entre frames.
+            static std::array<sf::Clock, 4> ai_timers; 
 
-					break;
-				}
-				case 1: //Pink Ghost -> Dpll 
-				{
+            int dist;
+            dist = abs(position.x-i_pacman_position.x)+abs(position.y-i_pacman_position.y);
 
-					if(position.x%CELL_SIZE==0&&position.y%CELL_SIZE==0){
-						std::vector<Position> otros_fantasmas;
+            bool at_intersection;
+            at_intersection = (position.x%CELL_SIZE==0&&position.y%CELL_SIZE==0);
+
+            switch(id)
+            {
+                case 0: // Red ghost -> A*
+                {
+                    // Recalcula si esta en una interseccion O si esta cerca y pasaron 199 ms
+                    if(at_intersection||(dist<4*CELL_SIZE&&ai_timers[0].getElapsedTime().asMilliseconds()>=199)){
+                        target = calculate_A_star_move(i_map, position, i_pacman_position);
+                        ai_timers[0].restart();
+                    }
+                    break;
+                }
+                case 1: // Pink Ghost -> DPLL
+                {
+                    // Recalcula si esta en una interseccion O si esta cerca y pasaron 227 ms
+                    if(at_intersection||(dist<4*CELL_SIZE&&ai_timers[1].getElapsedTime().asMilliseconds()>=227)){
+                        std::vector<Position> otros_fantasmas;
                         
-						for(int i=0;i<4;++i){
-							if(all_ghosts[i].id!=1&&all_ghosts[i].movement_mode!=3){
-								otros_fantasmas.push_back(all_ghosts[i].get_position());
-							}
-						}
+                        for(int i=0;i<4;++i){
+                            if(all_ghosts[i].id!=1&&all_ghosts[i].movement_mode!=3){
+                                otros_fantasmas.push_back(all_ghosts[i].get_position());
+                            }
+                        }
                         
-						target = calculate_DPLL_move(i_map, position, i_pacman_position, otros_fantasmas);
-					}
-					
-					break;
-				}
-				case 2: // Blue Ghost -> Bayesian Network
-				{
-					if(position.x%CELL_SIZE==0&&position.y%CELL_SIZE==0)
-						target = calculate_Bayes_move(i_map, position, i_pacman_position, i_pacman_direction);
+                        target = calculate_DPLL_move(i_map, position, i_pacman_position, otros_fantasmas);
+                        ai_timers[1].restart();
+                    }
+                    break;
+                }
+                case 2: // Blue Ghost -> Bayesian Network
+                {
+                    // Recalcula si esta en una interseccion O si esta cerca y pasaron 251 ms
+                    if(at_intersection||(dist<4*CELL_SIZE&&ai_timers[2].getElapsedTime().asMilliseconds()>=251)){
+                        target = calculate_Bayes_move(i_map, position, i_pacman_position, i_pacman_direction);
+                        ai_timers[2].restart();
+                    }
+                    break;
+                }
+                case 3: // Orange Ghost -> Vanilla
+                {
+                    if(CELL_SIZE*GHOST_3_CHASE<=sqrt(pow(position.x-i_pacman_position.x, 2)+pow(position.y-i_pacman_position.y, 2))){
+                        target = i_pacman_position;
+                    }
+                    else{
+                        target = {0, CELL_SIZE*(MAP_HEIGHT-1)};
+                    }
+                    break;
+                }
+            }
 
-					break;
-				}
-				case 3: //The orange gohst will chase Pacman until it gets close to him. Then it'll switch to the scatter mode.
-				{
-					//Using the Pythagoras' theorem again.
-					if (CELL_SIZE * GHOST_3_CHASE <= sqrt(pow(position.x - i_pacman_position.x, 2) + pow(position.y - i_pacman_position.y, 2)))
-					{
-						target = i_pacman_position;
-					}
-					else
-					{
-						target = {0, CELL_SIZE * (MAP_HEIGHT - 1)};
-					}
-				}
-			}
 		}
 	}
 }
