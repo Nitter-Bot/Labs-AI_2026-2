@@ -65,15 +65,8 @@ int main(){
 
             // Inyectar el ADN a los individuos base
             if(best_weights.size()==num_genes){
-                for(int i=0;i<3;++i){
+                for(int i=0;i<pop_size;++i){
                     ga.population[i].weights = best_weights;
-                }
-                // Los demas seran mutaciones de este mejor ADN
-                for(int i=3;i<pop_size;++i){
-                    ga.population[i].weights = best_weights;
-                    for(int j=0;j<num_genes;++j){
-                        ga.population[i].weights[j] += ((rand()%200)-100)/50.0; // Mutacion aleatoria
-                    }
                 }
             }
         }
