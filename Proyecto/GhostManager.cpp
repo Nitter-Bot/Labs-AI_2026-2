@@ -83,3 +83,12 @@ void GhostManager::update(unsigned char i_level, std::array<std::array<Cell, MAP
 		ghost.update(i_level, i_map, ghosts[0], i_pacman,ghosts);
 	}
 }
+
+std::array<Position, 4> GhostManager::get_ghost_positions()
+{
+    std::array<Position, 4> res;
+    for(int i=0;i<4;++i){
+        res[i] = ghosts[i].get_position();
+    }
+    return res;
+}
