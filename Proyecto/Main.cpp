@@ -2,7 +2,7 @@
 #include <chrono>
 #include <ctime>
 #include <SFML/Graphics.hpp>
-
+#include <iostream>
 #include "Headers/Global.hpp"
 #include "Headers/DrawText.hpp"
 #include "Headers/Pacman.hpp"
